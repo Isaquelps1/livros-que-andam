@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+📚 Jornada do Livro — SENAI
 
-## Getting Started
+🌍 Sobre o projeto
 
-First, run the development server:
+O Jornada do Livro é uma plataforma web que transforma a leitura em uma experiência coletiva.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+A proposta é simples:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+«Um livro é passado de pessoa para pessoa, e cada leitor registra por onde ele passou e o que aprendeu.»
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Com isso, o livro deixa de ser apenas um objeto físico e se torna uma jornada acompanhável, visível em mapa e construída por várias pessoas.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+🎯 Objetivo
 
-To learn more about Next.js, take a look at the following resources:
+- Incentivar o hábito da leitura
+- Promover compartilhamento de conhecimento
+- Criar uma experiência interativa com livros físicos
+- Permitir acompanhar a trajetória de cada livro
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+🔄 Como funciona
 
-## Deploy on Vercel
+1. A pessoa recebe um livro
+2. Acessa o site via QR Code ou código do livro
+3. Visualiza a jornada do livro
+4. Registra:
+   - Cidade
+   - Bairro (opcional)
+   - O que aprendeu com a leitura
+5. Passa o livro adiante
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+🗺️ Funcionalidades
+
+- 📍 Mapa interativo mostrando por onde o livro passou
+- 📜 Linha do tempo com os registros
+- ✍️ Formulário simples (sem login)
+- 📚 Sistema por código de livro (ex: SENAI-001)
+- ⚡ Experiência rápida e mobile-first
+
+---
+
+🔐 Privacidade
+
+O projeto segue princípios da Lei Geral de Proteção de Dados (LGPD):
+
+- Não coleta dados sensíveis
+- Não exige cadastro
+- Não armazena identificação pessoal obrigatória
+- Uso apenas educacional
+
+---
+
+🧱 Tecnologias utilizadas
+
+- Next.js — estrutura da aplicação
+- Firebase — banco de dados (Firestore)
+- Leaflet — mapa interativo
+- OpenStreetMap — base do mapa
+
+---
+
+📌 Status do projeto
+
+🚧 Em desenvolvimento (MVP)
+
+---
+
+🤝 Contribuição
+
+Este é um projeto educacional. Sugestões e melhorias são bem-vindas.
+
+---
+
+📚 Mensagem final
+
+«Leia. Registre. Compartilhe.
+E deixe o livro continuar sua jornada.»
