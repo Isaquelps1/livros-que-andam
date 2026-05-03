@@ -110,8 +110,10 @@ export default function BookPage() {
   const [loadingLogs, setLoadingLogs] = useState(true);
   const [showMap, setShowMap] = useState(false);
 
-  const formStep: 1 | 2 = cidade ? 2 : 1;
-  const canSubmit = !isSubmitting && cidade && bairro && aprendizado.length >= 10;
+  const cidadeConfirmed = cidade.length > 0;
+  const bairroConfirmed = bairro.length > 0;
+  const formStep: 1 | 2 = cidadeConfirmed ? 2 : 1;
+  const canSubmit = !isSubmitting && cidadeConfirmed && bairroConfirmed && aprendizado.length >= 10;
 
   const loadLogs = useCallback(async () => {
     if (!isValid) return;
@@ -342,13 +344,20 @@ export default function BookPage() {
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
                     <div>
                       <label style={labelStyle}>Cidade <span style={{ color: C.purple }}>*</span></label>
-                      <CidadeInput value={cidade} onChange={setCidade} inputStyle={inputStyle} />
+                      <CidadeInput value={cidade} onChange={setCidade} inputStyle={inputStyle} confirmed={cidadeConfirmed} />
                     </div>
                     <div>
                       <label style={labelStyle}>Bairro <span style={{ color: C.purple }}>*</span></label>
-                      <BairroInput value={bairro} onChange={setBairro} cidade={cidade} inputStyle={inputStyle} />
+                      <BairroInput value={bairro} onChange={setBairro} cidade={cidade} inputStyle={inputStyle} confirmed={bairroConfirmed} />
                     </div>
                   </div>
+                  {/* Hint when not confirmed */}
+                  {!cidadeConfirmed && !bairroConfirmed && (
+                    <p style={{ fontSize: 11, color: C.text3, marginTop: 10, display: "flex", alignItems: "center", gap: 6 }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12.01" y2="16"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+                      Selecione a cidade e o bairro a partir das sugestões para que possam ser localizados no mapa.
+                    </p>
+                  )}
                 </div>
 
                 {/* Seção 2 — Aprendizado */}

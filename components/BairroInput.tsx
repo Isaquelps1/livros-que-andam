@@ -15,6 +15,7 @@ interface Props {
   onChange: (value: string) => void;
   cidade: string;
   inputStyle: React.CSSProperties;
+  confirmed?: boolean;
 }
 
 const dropStyle: React.CSSProperties = {
@@ -34,7 +35,7 @@ const dropStyle: React.CSSProperties = {
   boxShadow: "0 8px 32px rgba(0,0,0,.5)",
 };
 
-export default function BairroInput({ value, onChange, cidade, inputStyle }: Props) {
+export default function BairroInput({ value, onChange, cidade, inputStyle, confirmed }: Props) {
   const [query, setQuery] = useState(value);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
@@ -67,7 +68,7 @@ export default function BairroInput({ value, onChange, cidade, inputStyle }: Pro
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
     const val = e.target.value;
     setQuery(val);
-    onChange(val);
+    onChange(""); // unconfirmed while typing
     setActiveIndex(-1);
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -120,13 +121,33 @@ export default function BairroInput({ value, onChange, cidade, inputStyle }: Pro
         onChange={handleInput}
         onKeyDown={handleKeyDown}
         placeholder={disabled ? "Selecione a cidade primeiro" : "Ex: Vila Mariana"}
-        style={{ ...inputStyle, opacity: disabled ? 0.5 : 1, cursor: disabled ? "not-allowed" : undefined }}
+        style={{
+          ...inputStyle,
+          opacity: disabled ? 0.5 : 1,
+          cursor: disabled ? "not-allowed" : undefined,
+          borderColor: confirmed ? "rgba(34,197,94,.35)" : query && !confirmed ? "rgba(245,158,11,.3)" : undefined,
+        }}
         disabled={disabled}
         required
         autoComplete="off"
         aria-autocomplete="list"
         aria-expanded={open}
       />
+      {/* Confirmation badge */}
+      {!disabled && query && (
+        <span style={{
+          position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)",
+          fontSize: 10, fontWeight: 700, letterSpacing: ".04em",
+          padding: "3px 8px", borderRadius: 6,
+          ...(confirmed
+            ? { color: "#22c55e", background: "rgba(34,197,94,.08)", border: "1px solid rgba(34,197,94,.15)" }
+            : { color: "#f59e0b", background: "rgba(245,158,11,.06)", border: "1px solid rgba(245,158,11,.12)" }),
+          pointerEvents: "none" as const,
+          transition: "all .25s ease",
+        }}>
+          {confirmed ? "✓" : "Selecione da lista"}
+        </span>
+      )}
       {loading && (
         <span style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", width: 16, height: 16, border: "2px solid rgba(255,255,255,.1)", borderTopColor: "#8b5cf6", borderRadius: "50%", display: "inline-block", animation: "spin .7s linear infinite" }} />
       )}
