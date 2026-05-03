@@ -88,6 +88,7 @@ const S = {
     textDecoration: "none",
     transition: "all .35s cubic-bezier(.4,0,.2,1)",
     fontFamily: "inherit",
+    minHeight: 52,
   } as React.CSSProperties,
   btnGhost: {
     display: "inline-flex",
@@ -105,6 +106,7 @@ const S = {
     textDecoration: "none",
     transition: "all .3s ease",
     fontFamily: "inherit",
+    minHeight: 52,
   } as React.CSSProperties,
   sectionBadge: {
     display: "inline-flex",
@@ -133,11 +135,9 @@ export default function Home() {
       const progress = scrollable > 0 ? window.scrollY / scrollable : 0;
       setScrollProgress(Math.min(1, Math.max(0, progress)));
     }
-
     updateScrollProgress();
     window.addEventListener("scroll", updateScrollProgress, { passive: true });
     window.addEventListener("resize", updateScrollProgress);
-
     return () => {
       window.removeEventListener("scroll", updateScrollProgress);
       window.removeEventListener("resize", updateScrollProgress);
@@ -146,6 +146,8 @@ export default function Home() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+
+      {/* Scroll trace */}
       <div
         className="scroll-trace"
         style={{ "--trace-progress": `${scrollProgress * 100}%` } as React.CSSProperties}
@@ -158,16 +160,15 @@ export default function Home() {
         {["Início", "Jornada", "QR", "Destino"].map((label, index) => {
           const pointProgress = index / 3;
           const isActive = scrollProgress + 0.04 >= pointProgress;
-
           return (
-          <div key={label} className={`scroll-trace__point scroll-trace__point--${index + 1} ${isActive ? "is-active" : ""}`}>
-            <span />
-            <small>{label}</small>
-          </div>
+            <div key={label} className={`scroll-trace__point scroll-trace__point--${index + 1} ${isActive ? "is-active" : ""}`}>
+              <span /><small>{label}</small>
+            </div>
           );
         })}
       </div>
 
+      {/* ===== HERO ===== */}
       <section style={{
         position: "relative",
         display: "flex",
@@ -178,14 +179,14 @@ export default function Home() {
         padding: "80px 24px",
         overflow: "hidden",
       }}>
+        {/* Grid bg */}
         <div style={{
-          position: "absolute",
-          inset: 0,
-          opacity: .4,
+          position: "absolute", inset: 0, opacity: .4,
           backgroundImage: "linear-gradient(rgba(139,92,246,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(139,92,246,.03) 1px, transparent 1px)",
           backgroundSize: "64px 64px",
         }} />
 
+        {/* Orbs */}
         <div className="a-float1" style={{ position: "absolute", top: "-8%", left: "8%", width: 600, height: 600, borderRadius: "50%", background: `radial-gradient(circle, ${C.purpleGlow} 0%, transparent 65%)`, filter: "blur(40px)", pointerEvents: "none" }} />
         <div className="a-float2" style={{ position: "absolute", bottom: "-10%", right: "5%", width: 500, height: 500, borderRadius: "50%", background: `radial-gradient(circle, ${C.amberGlow} 0%, transparent 65%)`, filter: "blur(50px)", pointerEvents: "none" }} />
         <div className="a-float1" style={{ position: "absolute", top: "30%", right: "18%", width: 250, height: 250, borderRadius: "50%", background: `radial-gradient(circle, ${C.tealGlow} 0%, transparent 65%)`, filter: "blur(30px)", pointerEvents: "none" }} />
@@ -204,7 +205,7 @@ export default function Home() {
           <h1 className="a-fade-up d2" style={{
             fontFamily: "'Space Grotesk', sans-serif",
             fontWeight: 700,
-            fontSize: "clamp(3.2rem, 9vw, 6rem)",
+            fontSize: "clamp(2.8rem, 9vw, 6rem)",
             letterSpacing: "-.04em",
             lineHeight: 1.05,
             margin: "40px 0 28px",
@@ -219,14 +220,13 @@ export default function Home() {
             }}>uma jornada</span>
           </h1>
 
-          <p className="a-fade-up d3" style={{ fontSize: "clamp(1.05rem, 2.5vw, 1.3rem)", color: C.text2, lineHeight: 1.75, maxWidth: 560, marginBottom: 52 }}>
-            O acesso ao registro acontece pelo QR Code de cada exemplar.
-            A home mostra o projeto, mas não revela os caminhos dos livros.
+          <p className="a-fade-up d3" style={{ fontSize: "clamp(1rem, 2.5vw, 1.25rem)", color: C.text2, lineHeight: 1.8, maxWidth: 540, marginBottom: 52 }}>
+            Cada exemplar carrega um QR Code único. Quem está com o livro escaneia, registra onde está e deixa sua marca na história daquele exemplar pelo Brasil.
           </p>
 
-          <div className="a-fade-up d4" style={{ display: "flex", flexWrap: "wrap", gap: 16, justifyContent: "center" }}>
+          <div className="a-fade-up d4 hero-buttons">
             <a href="#jornada" style={S.btnPrimary}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20V10" /><path d="M18 20V4" /><path d="M6 20v-4" /></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20V10" /><path d="M18 20V4" /><path d="M6 20v-4" /></svg>
               Ver Jornada
             </a>
             <a href="#como-funciona" style={S.btnGhost}>
@@ -234,19 +234,20 @@ export default function Home() {
             </a>
           </div>
 
-          <div className="a-fade-up d6" style={{ marginTop: 88, display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap", gap: 0 }}>
+          {/* Stats */}
+          <div className="a-fade-up d6 stats-row" style={{ marginTop: 80 }}>
             {[
-              { val: "QR", label: "Acesso", gradient: `linear-gradient(135deg, ${C.purple}, ${C.purpleLight})` },
+              { val: "15", label: "Livros", gradient: `linear-gradient(135deg, ${C.purple}, ${C.purpleLight})` },
               { val: "∞", label: "Leitores", gradient: `linear-gradient(135deg, ${C.amber}, #f97316)` },
               { val: "🗺️", label: "Mapa Vivo", gradient: "none" },
             ].map((stat, i) => (
               <div key={stat.label} style={{ display: "flex", alignItems: "center" }}>
-                {i > 0 && <div style={{ width: 1, height: 48, background: "rgba(255,255,255,.06)", margin: "0 32px" }} />}
-                <div style={{ textAlign: "center", minWidth: 80 }}>
+                {i > 0 && <div className="stat-sep" style={{ width: 1, height: 48, background: "rgba(255,255,255,.06)", margin: "0 28px" }} />}
+                <div style={{ textAlign: "center", minWidth: 72 }}>
                   <p style={{
                     fontFamily: "'Space Grotesk'",
                     fontWeight: 700,
-                    fontSize: "2.8rem",
+                    fontSize: "clamp(2rem, 5vw, 2.8rem)",
                     lineHeight: 1.1,
                     ...(stat.gradient !== "none" ? { background: stat.gradient, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" } : {}),
                     animation: "countUp .6s ease both",
@@ -259,33 +260,37 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Scroll hint */}
         <div className="a-bounce" style={{ position: "absolute", bottom: 36, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
           <span style={{ fontSize: 9, color: C.text3, textTransform: "uppercase", letterSpacing: ".25em", fontWeight: 600 }}>Scroll</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.text3} strokeWidth="2"><path d="M12 5v14M5 12l7 7 7-7" /></svg>
         </div>
       </section>
 
-      <section id="jornada" style={{ position: "relative", padding: "120px 24px", display: "flex", justifyContent: "center" }}>
+      {/* ===== JORNADA INTERATIVA ===== */}
+      <section id="jornada" style={{ position: "relative", padding: "100px 24px", display: "flex", justifyContent: "center" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, ${C.purpleGlow}, transparent)` }} />
         <div style={{ width: "100%", maxWidth: 1100 }}>
-          <div style={{ textAlign: "center", marginBottom: 64, display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <div style={{ textAlign: "center", marginBottom: 56, display: "flex", flexDirection: "column", alignItems: "center" }}>
             <span style={{ ...S.sectionBadge, color: C.teal }}>Jornada interativa</span>
-            <h2 style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: "clamp(2rem, 5vw, 3.4rem)", letterSpacing: "-.03em", color: C.text1 }}>
-              O caminho sem revelar os livros
+            <h2 style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: "clamp(1.9rem, 5vw, 3.2rem)", letterSpacing: "-.03em", color: C.text1 }}>
+              Como o livro viaja pelo Brasil
             </h2>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))", gap: 28, alignItems: "stretch" }}>
-            <div style={{ background: C.cardSoft, border: `1px solid ${C.border}`, borderRadius: 24, padding: 28, position: "relative", overflow: "hidden", minHeight: 430 }}>
-              <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 40%, ${active.glow} 0%, transparent 55%)`, pointerEvents: "none" }} />
-              <div style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: 28 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))", gap: 24, alignItems: "stretch" }}>
+            {/* Painel esquerdo - visual ativo */}
+            <div style={{ background: C.cardSoft, border: `1px solid ${C.border}`, borderRadius: 24, padding: "28px 28px 24px", position: "relative", overflow: "hidden", minHeight: 380 }}>
+              <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 35%, ${active.glow} 0%, transparent 55%)`, pointerEvents: "none" }} />
+              <div style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: 24 }}>
                 <div>
-                  <span style={{ color: active.color, fontSize: 12, fontWeight: 800, letterSpacing: ".18em", textTransform: "uppercase" }}>{active.label}</span>
-                  <h3 style={{ fontFamily: "'Space Grotesk'", color: C.text1, fontSize: "clamp(1.8rem, 4vw, 2.8rem)", lineHeight: 1.1, letterSpacing: "-.03em", marginTop: 14 }}>{active.title}</h3>
-                  <p style={{ color: C.text2, lineHeight: 1.75, marginTop: 18, maxWidth: 460 }}>{active.desc}</p>
+                  <span style={{ color: active.color, fontSize: 11, fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase" }}>{active.label}</span>
+                  <h3 style={{ fontFamily: "'Space Grotesk'", color: C.text1, fontSize: "clamp(1.6rem, 4vw, 2.6rem)", lineHeight: 1.1, letterSpacing: "-.03em", marginTop: 12 }}>{active.title}</h3>
+                  <p style={{ color: C.text2, lineHeight: 1.75, marginTop: 14, maxWidth: 420, fontSize: 15 }}>{active.desc}</p>
                 </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+                {/* 4 botões — 2x2 no mobile via CSS */}
+                <div className="journey-grid-4">
                   {journey.map((step, index) => (
                     <button
                       key={step.title}
@@ -293,7 +298,7 @@ export default function Home() {
                       onClick={() => setActiveStep(index)}
                       aria-label={step.title}
                       style={{
-                        height: 92,
+                        height: 88,
                         borderRadius: 16,
                         border: `1px solid ${index === activeStep ? step.color : C.border}`,
                         background: index === activeStep ? step.glow : "rgba(255,255,255,.025)",
@@ -306,9 +311,10 @@ export default function Home() {
                         alignItems: "center",
                         justifyContent: "center",
                         gap: 8,
+                        minHeight: 44,
                       }}
                     >
-                      <span style={{ fontSize: 24 }}>{step.icon}</span>
+                      <span style={{ fontSize: 22 }}>{step.icon}</span>
                       <span style={{ fontSize: 11, color: index === activeStep ? C.text1 : C.text3, fontWeight: 700 }}>{String(index + 1).padStart(2, "0")}</span>
                     </button>
                   ))}
@@ -316,11 +322,11 @@ export default function Home() {
               </div>
             </div>
 
-            <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 24, padding: 28, display: "flex", flexDirection: "column", justifyContent: "center", gap: 22 }}>
+            {/* Painel direito - lista de passos */}
+            <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 24, padding: 24, display: "flex", flexDirection: "column", justifyContent: "center", gap: 12 }}>
               {journey.map((step, index) => {
                 const isActive = index === activeStep;
                 const isDone = index < activeStep;
-
                 return (
                   <button
                     key={step.title}
@@ -328,33 +334,30 @@ export default function Home() {
                     onClick={() => setActiveStep(index)}
                     style={{
                       display: "grid",
-                      gridTemplateColumns: "48px 1fr",
-                      gap: 16,
+                      gridTemplateColumns: "52px 1fr",
+                      gap: 14,
                       textAlign: "left",
                       alignItems: "center",
                       background: isActive ? "rgba(255,255,255,.04)" : "transparent",
                       border: `1px solid ${isActive ? step.color : "transparent"}`,
                       borderRadius: 16,
-                      padding: 14,
+                      padding: "14px 16px",
                       cursor: "pointer",
                       fontFamily: "inherit",
                       transition: "all .25s ease",
+                      minHeight: 64,
                     }}
                   >
                     <span style={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: 14,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
+                      width: 48, height: 48, borderRadius: 14,
+                      display: "flex", alignItems: "center", justifyContent: "center",
                       background: isActive || isDone ? step.glow : "rgba(255,255,255,.025)",
                       border: `1px solid ${isActive ? step.color : C.border}`,
-                      fontSize: 22,
+                      fontSize: 22, flexShrink: 0,
                     }}>{step.icon}</span>
                     <span>
-                      <span style={{ display: "block", color: C.text1, fontWeight: 700, fontSize: 15 }}>{step.title}</span>
-                      <span style={{ display: "block", color: C.text3, fontSize: 12, marginTop: 4 }}>{step.label}</span>
+                      <span style={{ display: "block", color: C.text1, fontWeight: 700, fontSize: 14 }}>{step.title}</span>
+                      <span style={{ display: "block", color: C.text3, fontSize: 12, marginTop: 3 }}>{step.label}</span>
                     </span>
                   </button>
                 );
@@ -364,83 +367,101 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="como-funciona" style={{ position: "relative", padding: "120px 24px", display: "flex", justifyContent: "center" }}>
+      {/* ===== COMO FUNCIONA ===== */}
+      <section id="como-funciona" style={{ position: "relative", padding: "100px 24px", display: "flex", justifyContent: "center" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, ${C.amberGlow}, transparent)` }} />
         <div style={{ width: "100%", maxWidth: 1040 }}>
-          <div style={{ textAlign: "center", marginBottom: 80, display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <span style={{ ...S.sectionBadge, color: C.purpleLight }}>Acesso por exemplar</span>
-            <h2 style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: "clamp(2rem, 5vw, 3.4rem)", letterSpacing: "-.03em", color: C.text1 }}>
-              Como funciona?
+          <div style={{ textAlign: "center", marginBottom: 64, display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <span style={{ ...S.sectionBadge, color: C.purpleLight }}>Se você está com o livro</span>
+            <h2 style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: "clamp(1.9rem, 5vw, 3.2rem)", letterSpacing: "-.03em", color: C.text1 }}>
+              Três passos simples
             </h2>
+            <p style={{ fontSize: 15, color: C.text2, marginTop: 16, maxWidth: 460, lineHeight: 1.7 }}>
+              Registrar sua passagem leva menos de dois minutos.
+            </p>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
-            {journey.slice(1).map((step) => (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))", gap: 20 }}>
+            {journey.slice(1).map((step, i) => (
               <div key={step.title} className="a-border-glow" style={{
                 background: C.card,
                 borderRadius: 24,
-                padding: 36,
-                textAlign: "center",
+                padding: "36px 32px 32px",
                 border: `1px solid ${C.border}`,
                 transition: "all .4s",
                 position: "relative",
                 overflow: "hidden",
               }}>
-                <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${step.color}, transparent)`, opacity: .4 }} />
+                <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${step.color}, transparent)`, opacity: .45 }} />
+
+                {/* Número do passo */}
                 <div style={{
-                  width: 80,
-                  height: 80,
-                  borderRadius: "50%",
-                  background: step.glow,
-                  border: `2px solid ${step.color}33`,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 36,
-                  flexShrink: 0,
-                  margin: "0 auto 28px",
-                  boxShadow: `0 0 40px ${step.glow}`,
+                  position: "absolute", top: 20, right: 20,
+                  fontFamily: "'Space Grotesk'", fontWeight: 800, fontSize: 11,
+                  color: step.color, letterSpacing: ".12em",
+                  background: `${step.glow}`,
+                  border: `1px solid ${step.color}22`,
+                  padding: "4px 10px", borderRadius: 8,
+                }}>0{i + 1}</div>
+
+                <div style={{
+                  width: 72, height: 72, borderRadius: "50%",
+                  background: step.glow, border: `2px solid ${step.color}33`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 34, margin: "0 auto 24px",
+                  boxShadow: `0 0 32px ${step.glow}`,
                 }}>{step.icon}</div>
-                <h3 style={{ fontFamily: "'Space Grotesk'", fontWeight: 600, fontSize: "1.15rem", color: C.text1, marginBottom: 12, letterSpacing: "-.01em" }}>{step.title}</h3>
-                <p style={{ fontSize: 14, color: C.text2, lineHeight: 1.75 }}>{step.desc}</p>
+
+                <h3 style={{ fontFamily: "'Space Grotesk'", fontWeight: 600, fontSize: "1.1rem", color: C.text1, marginBottom: 10, letterSpacing: "-.01em", textAlign: "center" }}>{step.title}</h3>
+                <p style={{ fontSize: 14, color: C.text2, lineHeight: 1.8, textAlign: "center" }}>{step.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section style={{ position: "relative", padding: "100px 24px", display: "flex", justifyContent: "center", overflow: "hidden" }}>
-        <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 50% 60% at 50% 50%, ${C.purpleGlow} 0%, transparent 70%)`, pointerEvents: "none" }} />
-        <div style={{ position: "relative", textAlign: "center", maxWidth: 620, display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <p style={{ fontSize: 48, marginBottom: 24 }}>📖</p>
-          <h2 style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: "clamp(1.8rem, 4vw, 2.6rem)", letterSpacing: "-.02em", color: C.text1, marginBottom: 16, lineHeight: 1.2 }}>
-            O próximo ponto depende de quem está com o livro
-          </h2>
-          <p style={{ fontSize: 15, color: C.text2, lineHeight: 1.7 }}>
-            Ao receber um exemplar, escaneie o QR Code colado nele e registre sua passagem.
-          </p>
+      {/* ===== CTA FINAL ===== */}
+      <section style={{ position: "relative", padding: "80px 24px 100px", display: "flex", justifyContent: "center", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 50% 70% at 50% 50%, ${C.purpleGlow} 0%, transparent 70%)`, pointerEvents: "none" }} />
+        <div style={{ position: "relative", width: "100%", maxWidth: 640, display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <div style={{
+            width: "100%", textAlign: "center",
+            background: C.cardSoft, border: `1px solid ${C.borderHover}`,
+            borderRadius: 28, padding: "52px 40px",
+            backdropFilter: "blur(20px)",
+            position: "relative", overflow: "hidden",
+          }}>
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${C.purple}, ${C.amber}, ${C.teal})`, opacity: .4 }} />
+
+            <p style={{ fontSize: 44, marginBottom: 20, lineHeight: 1 }}>📖</p>
+            <h2 style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: "clamp(1.6rem, 4vw, 2.2rem)", letterSpacing: "-.02em", color: C.text1, marginBottom: 14, lineHeight: 1.25 }}>
+              O próximo ponto da jornada<br />depende de você
+            </h2>
+            <p style={{ fontSize: 15, color: C.text2, lineHeight: 1.75, maxWidth: 420, margin: "0 auto" }}>
+              Recebeu um exemplar? O QR Code no livro vai direto para a página dele. Registre onde você está e deixe sua marca na história desse livro.
+            </p>
+          </div>
         </div>
       </section>
 
-      <footer style={{ padding: "52px 24px", borderTop: `1px solid ${C.border}`, display: "flex", justifyContent: "center" }}>
+      {/* ===== FOOTER ===== */}
+      <footer style={{ padding: "48px 24px", borderTop: `1px solid ${C.border}`, display: "flex", justifyContent: "center" }}>
         <div style={{ textAlign: "center", maxWidth: 480 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 14 }}>
             <div style={{ width: 36, height: 36, borderRadius: 10, background: C.purpleGlow, border: `1px solid rgba(139,92,246,.2)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.purpleLight} strokeWidth="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></svg>
             </div>
             <span style={{
-              fontFamily: "'Space Grotesk'",
-              fontWeight: 700,
-              fontSize: "1.1rem",
+              fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: "1.1rem",
               background: `linear-gradient(135deg, ${C.purple}, ${C.purpleLight})`,
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
             }}>Jornada do Livro</span>
           </div>
           <p style={{ fontSize: 13, color: C.text3, marginBottom: 6 }}>Um projeto de incentivo à leitura colaborativa.</p>
           <p style={{ fontSize: 11, color: "rgba(82,82,91,.6)" }}>© 2026 SENAI — Todos os direitos reservados.</p>
         </div>
       </footer>
+
     </div>
   );
 }

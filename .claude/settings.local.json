@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem *)",
+      "Bash(Remove-Item *)",
+      "Bash(npx tsc *)"
+    ]
+  }
+}
