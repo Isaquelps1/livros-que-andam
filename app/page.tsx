@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ParticleField from "@/components/ParticleField";
 
 const C = {
   bg: "#060609",
@@ -54,6 +55,30 @@ const journey = [
     desc: "A rota cresce conforme o livro passa de mão em mão e acumula histórias.",
     color: C.green,
     glow: "rgba(34,197,94,.12)",
+  },
+];
+
+const readerSignals = [
+  {
+    id: "SENAI-001",
+    city: "São Paulo",
+    action: "QR lido agora",
+    note: "O leitor registrou uma nova passagem e deixou um aprendizado curto.",
+    color: C.amber,
+  },
+  {
+    id: "SENAI-008",
+    city: "Campinas",
+    action: "Novo ponto no mapa",
+    note: "O livro saiu da biblioteca e ganhou uma parada fora da escola.",
+    color: C.teal,
+  },
+  {
+    id: "SENAI-015",
+    city: "Jundiaí",
+    action: "Leitura finalizada",
+    note: "A próxima pessoa já pode continuar a rota pelo QR do exemplar.",
+    color: C.green,
   },
 ];
 
@@ -126,28 +151,50 @@ const S = {
 
 export default function Home() {
   const [activeStep, setActiveStep] = useState(1);
+  const [activeSignal, setActiveSignal] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [heroPointer, setHeroPointer] = useState({ x: 0.5, y: 0.5 });
   const active = journey[activeStep];
+  const signal = readerSignals[activeSignal];
 
   useEffect(() => {
+    let frame = 0;
     function updateScrollProgress() {
+      frame = 0;
       const scrollable = document.documentElement.scrollHeight - window.innerHeight;
       const progress = scrollable > 0 ? window.scrollY / scrollable : 0;
       setScrollProgress(Math.min(1, Math.max(0, progress)));
     }
+    function requestUpdate() {
+      if (frame) return;
+      frame = requestAnimationFrame(updateScrollProgress);
+    }
     updateScrollProgress();
-    window.addEventListener("scroll", updateScrollProgress, { passive: true });
-    window.addEventListener("resize", updateScrollProgress);
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
     return () => {
-      window.removeEventListener("scroll", updateScrollProgress);
-      window.removeEventListener("resize", updateScrollProgress);
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
     };
   }, []);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setActiveSignal((current) => (current + 1) % readerSignals.length);
+    }, 2800);
+    return () => window.clearInterval(interval);
+  }, []);
+
+  const heroMotionStyle = {
+    "--hero-tilt-x": `${(0.5 - heroPointer.y) * 8}deg`,
+    "--hero-tilt-y": `${(heroPointer.x - 0.5) * 10}deg`,
+    "--hero-drift": `${scrollProgress * 36}px`,
+  } as React.CSSProperties;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
 
-      {/* Scroll trace */}
       <div
         className="scroll-trace"
         style={{ "--trace-progress": `${scrollProgress * 100}%` } as React.CSSProperties}
@@ -168,128 +215,160 @@ export default function Home() {
         })}
       </div>
 
-      {/* ===== HERO ===== */}
-      <section style={{
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100vh",
-        padding: "80px 24px",
-        overflow: "hidden",
-      }}>
-        {/* Grid bg */}
+      <section
+        className="hero-section"
+        onPointerMove={(event) => {
+          const rect = event.currentTarget.getBoundingClientRect();
+          setHeroPointer({
+            x: (event.clientX - rect.left) / rect.width,
+            y: (event.clientY - rect.top) / rect.height,
+          });
+        }}
+        onPointerLeave={() => setHeroPointer({ x: 0.5, y: 0.5 })}
+      >
+        <ParticleField count={58} />
+
         <div style={{
           position: "absolute", inset: 0, opacity: .4,
           backgroundImage: "linear-gradient(rgba(139,92,246,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(139,92,246,.03) 1px, transparent 1px)",
           backgroundSize: "64px 64px",
         }} />
 
-        {/* Orbs */}
-        <div className="a-float1" style={{ position: "absolute", top: "-8%", left: "8%", width: 600, height: 600, borderRadius: "50%", background: `radial-gradient(circle, ${C.purpleGlow} 0%, transparent 65%)`, filter: "blur(40px)", pointerEvents: "none" }} />
-        <div className="a-float2" style={{ position: "absolute", bottom: "-10%", right: "5%", width: 500, height: 500, borderRadius: "50%", background: `radial-gradient(circle, ${C.amberGlow} 0%, transparent 65%)`, filter: "blur(50px)", pointerEvents: "none" }} />
-        <div className="a-float1" style={{ position: "absolute", top: "30%", right: "18%", width: 250, height: 250, borderRadius: "50%", background: `radial-gradient(circle, ${C.tealGlow} 0%, transparent 65%)`, filter: "blur(30px)", pointerEvents: "none" }} />
+        <div className="hero-aurora hero-aurora--one" />
+        <div className="hero-aurora hero-aurora--two" />
 
-        <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", maxWidth: 820 }}>
-          <div className="a-fade-up">
-            <span style={S.badge}>
-              <span style={{ position: "relative", width: 10, height: 10 }}>
-                <span style={{ position: "absolute", inset: 0, borderRadius: "50%", background: C.green, animation: "pulseDot 1.5s ease-out infinite" }} />
-                <span style={{ position: "relative", display: "block", width: 10, height: 10, borderRadius: "50%", background: C.green }} />
+        <div className="hero-shell" style={heroMotionStyle}>
+          <div className="hero-copy">
+            <div className="a-fade-up">
+              <span style={S.badge}>
+                <span style={{ position: "relative", width: 10, height: 10 }}>
+                  <span style={{ position: "absolute", inset: 0, borderRadius: "50%", background: C.green, animation: "pulseDot 1.5s ease-out infinite" }} />
+                  <span style={{ position: "relative", display: "block", width: 10, height: 10, borderRadius: "50%", background: C.green }} />
+                </span>
+                Projeto ativo de leitura compartilhada
               </span>
-              Projeto ativo de leitura compartilhada
-            </span>
-          </div>
+            </div>
 
-          <h1 className="a-fade-up d2" style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 700,
-            fontSize: "clamp(2.8rem, 9vw, 6rem)",
-            letterSpacing: "-.04em",
-            lineHeight: 1.05,
-            margin: "40px 0 28px",
-            color: C.text1,
-          }}>
-            Cada livro é<br />
-            <span style={{
-              background: "linear-gradient(135deg, #f59e0b 0%, #f97316 30%, #ef4444 55%, #a855f7 80%, #8b5cf6 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}>uma jornada</span>
-          </h1>
+            <h1 className="a-fade-up d2" style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700,
+              fontSize: "clamp(2.8rem, 8vw, 5.8rem)",
+              letterSpacing: 0,
+              lineHeight: 1.05,
+              margin: "36px 0 28px",
+              color: C.text1,
+            }}>
+              Cada livro é<br />
+              <span style={{
+                background: "linear-gradient(135deg, #f59e0b 0%, #f97316 30%, #ef4444 55%, #a855f7 80%, #8b5cf6 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}>uma jornada</span>
+            </h1>
 
-          <p className="a-fade-up d3" style={{ fontSize: "clamp(1rem, 2.5vw, 1.25rem)", color: C.text2, lineHeight: 1.8, maxWidth: 540, marginBottom: 52 }}>
-            Cada exemplar carrega um QR Code único. Quem está com o livro escaneia, registra onde está e deixa sua marca na história daquele exemplar pelo Brasil.
-          </p>
+            <p className="a-fade-up d3" style={{ fontSize: "clamp(1rem, 2.5vw, 1.18rem)", color: C.text2, lineHeight: 1.8, maxWidth: 560, marginBottom: 42 }}>
+              Cada exemplar carrega um QR Code único. Quem está com o livro escaneia, registra onde está e deixa sua marca na história daquele exemplar pelo Brasil.
+            </p>
 
-          <div className="a-fade-up d4 hero-buttons">
-            <a href="#jornada" style={S.btnPrimary}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20V10" /><path d="M18 20V4" /><path d="M6 20v-4" /></svg>
-              Ver Jornada
-            </a>
-            <a href="#como-funciona" style={S.btnGhost}>
-              Como Funciona?
-            </a>
-          </div>
+            <div className="a-fade-up d4 hero-buttons">
+              <a href="#jornada" style={S.btnPrimary}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20V10" /><path d="M18 20V4" /><path d="M6 20v-4" /></svg>
+                Ver Jornada
+              </a>
+              <a href="#como-funciona" style={S.btnGhost}>
+                Como Funciona?
+              </a>
+            </div>
 
-          {/* Stats */}
-          <div className="a-fade-up d6 stats-row" style={{ marginTop: 80 }}>
-            {[
-              { val: "15", label: "Livros", gradient: `linear-gradient(135deg, ${C.purple}, ${C.purpleLight})` },
-              { val: "∞", label: "Leitores", gradient: `linear-gradient(135deg, ${C.amber}, #f97316)` },
-              { val: "🗺️", label: "Mapa Vivo", gradient: "none" },
-            ].map((stat, i) => (
-              <div key={stat.label} style={{ display: "flex", alignItems: "center" }}>
-                {i > 0 && <div className="stat-sep" style={{ width: 1, height: 48, background: "rgba(255,255,255,.06)", margin: "0 28px" }} />}
-                <div style={{ textAlign: "center", minWidth: 72 }}>
-                  <p style={{
-                    fontFamily: "'Space Grotesk'",
-                    fontWeight: 700,
-                    fontSize: "clamp(2rem, 5vw, 2.8rem)",
-                    lineHeight: 1.1,
-                    ...(stat.gradient !== "none" ? { background: stat.gradient, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" } : {}),
-                    animation: "countUp .6s ease both",
-                    animationDelay: `${.8 + i * .15}s`,
-                  }}>{stat.val}</p>
-                  <p style={{ fontSize: 10, color: C.text3, textTransform: "uppercase", letterSpacing: ".18em", fontWeight: 700, marginTop: 6 }}>{stat.label}</p>
+            <div className="a-fade-up d6 stats-row" style={{ marginTop: 66 }}>
+              {[
+                { val: "15", label: "Livros", gradient: `linear-gradient(135deg, ${C.purple}, ${C.purpleLight})` },
+                { val: "∞", label: "Leitores", gradient: `linear-gradient(135deg, ${C.amber}, #f97316)` },
+                { val: "AO VIVO", label: "Mapa Vivo", gradient: `linear-gradient(135deg, ${C.teal}, ${C.green})` },
+              ].map((stat, i) => (
+                <div key={stat.label} style={{ display: "flex", alignItems: "center" }}>
+                  {i > 0 && <div className="stat-sep" style={{ width: 1, height: 48, background: "rgba(255,255,255,.06)", margin: "0 28px" }} />}
+                  <div style={{ textAlign: "center", minWidth: 72 }}>
+                    <p style={{
+                      fontFamily: "'Space Grotesk'",
+                      fontWeight: 700,
+                      fontSize: stat.val === "AO VIVO" ? "clamp(1rem, 2.4vw, 1.45rem)" : "clamp(2rem, 5vw, 2.8rem)",
+                      lineHeight: 1.1,
+                      background: stat.gradient,
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      animation: "countUp .6s ease both",
+                      animationDelay: `${.8 + i * .15}s`,
+                    }}>{stat.val}</p>
+                    <p style={{ fontSize: 10, color: C.text3, textTransform: "uppercase", letterSpacing: ".18em", fontWeight: 700, marginTop: 6 }}>{stat.label}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
+
+          <aside className="hero-kinetic a-scale-up d5" aria-label="Prévia animada da jornada do livro">
+            <div className="book-prop">
+              <div className="book-prop__spine">SENAI-008</div>
+              <div className="book-prop__cover">
+                <span>Jornada</span>
+                <strong>Livro<br />Vivo</strong>
+                <small>QR único</small>
+              </div>
+            </div>
+
+            <div className="qr-orbit-card">
+              <div className="qr-orbit-card__code" aria-hidden="true">
+                {Array.from({ length: 25 }).map((_, index) => (
+                  <span key={index} className={(index + activeSignal) % 3 === 0 ? "is-lit" : ""} />
+                ))}
+              </div>
+              <div>
+                <strong>{signal.id}</strong>
+                <span>{signal.action}</span>
+              </div>
+            </div>
+
+            <div className="hero-live-card">
+              <span className="hero-live-card__dot" style={{ background: signal.color }} />
+              <small>{signal.city}</small>
+              <strong>{signal.action}</strong>
+              <p>{signal.note}</p>
+            </div>
+
+            <div className="trail-spark trail-spark--one" />
+            <div className="trail-spark trail-spark--two" />
+            <div className="trail-spark trail-spark--three" />
+          </aside>
         </div>
 
-        {/* Scroll hint */}
-        <div className="a-bounce" style={{ position: "absolute", bottom: 36, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+        <div className="a-bounce" style={{ position: "absolute", bottom: 30, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
           <span style={{ fontSize: 9, color: C.text3, textTransform: "uppercase", letterSpacing: ".25em", fontWeight: 600 }}>Scroll</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.text3} strokeWidth="2"><path d="M12 5v14M5 12l7 7 7-7" /></svg>
         </div>
       </section>
 
-      {/* ===== JORNADA INTERATIVA ===== */}
       <section id="jornada" style={{ position: "relative", padding: "100px 24px", display: "flex", justifyContent: "center" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, ${C.purpleGlow}, transparent)` }} />
         <div style={{ width: "100%", maxWidth: 1100 }}>
           <div style={{ textAlign: "center", marginBottom: 56, display: "flex", flexDirection: "column", alignItems: "center" }}>
             <span style={{ ...S.sectionBadge, color: C.teal }}>Jornada interativa</span>
-            <h2 style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: "clamp(1.9rem, 5vw, 3.2rem)", letterSpacing: "-.03em", color: C.text1 }}>
+            <h2 style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: "clamp(1.9rem, 5vw, 3.2rem)", letterSpacing: 0, color: C.text1 }}>
               Como o livro viaja pelo Brasil
             </h2>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))", gap: 24, alignItems: "stretch" }}>
-            {/* Painel esquerdo - visual ativo */}
             <div style={{ background: C.cardSoft, border: `1px solid ${C.border}`, borderRadius: 24, padding: "28px 28px 24px", position: "relative", overflow: "hidden", minHeight: 380 }}>
               <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 35%, ${active.glow} 0%, transparent 55%)`, pointerEvents: "none" }} />
               <div style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: 24 }}>
                 <div>
                   <span style={{ color: active.color, fontSize: 11, fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase" }}>{active.label}</span>
-                  <h3 style={{ fontFamily: "'Space Grotesk'", color: C.text1, fontSize: "clamp(1.6rem, 4vw, 2.6rem)", lineHeight: 1.1, letterSpacing: "-.03em", marginTop: 12 }}>{active.title}</h3>
+                  <h3 style={{ fontFamily: "'Space Grotesk'", color: C.text1, fontSize: "clamp(1.6rem, 4vw, 2.6rem)", lineHeight: 1.1, letterSpacing: 0, marginTop: 12 }}>{active.title}</h3>
                   <p style={{ color: C.text2, lineHeight: 1.75, marginTop: 14, maxWidth: 420, fontSize: 15 }}>{active.desc}</p>
                 </div>
 
-                {/* 4 botões — 2x2 no mobile via CSS */}
                 <div className="journey-grid-4">
                   {journey.map((step, index) => (
                     <button
@@ -297,21 +376,11 @@ export default function Home() {
                       type="button"
                       onClick={() => setActiveStep(index)}
                       aria-label={step.title}
+                      className="journey-mini-button"
                       style={{
-                        height: 88,
-                        borderRadius: 16,
                         border: `1px solid ${index === activeStep ? step.color : C.border}`,
                         background: index === activeStep ? step.glow : "rgba(255,255,255,.025)",
                         color: C.text1,
-                        cursor: "pointer",
-                        fontFamily: "inherit",
-                        transition: "all .25s ease",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: 8,
-                        minHeight: 44,
                       }}
                     >
                       <span style={{ fontSize: 22 }}>{step.icon}</span>
@@ -322,7 +391,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Painel direito - lista de passos */}
             <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 24, padding: 24, display: "flex", flexDirection: "column", justifyContent: "center", gap: 12 }}>
               {journey.map((step, index) => {
                 const isActive = index === activeStep;
@@ -367,13 +435,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== COMO FUNCIONA ===== */}
       <section id="como-funciona" style={{ position: "relative", padding: "100px 24px", display: "flex", justifyContent: "center" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, ${C.amberGlow}, transparent)` }} />
         <div style={{ width: "100%", maxWidth: 1040 }}>
           <div style={{ textAlign: "center", marginBottom: 64, display: "flex", flexDirection: "column", alignItems: "center" }}>
             <span style={{ ...S.sectionBadge, color: C.purpleLight }}>Se você está com o livro</span>
-            <h2 style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: "clamp(1.9rem, 5vw, 3.2rem)", letterSpacing: "-.03em", color: C.text1 }}>
+            <h2 style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: "clamp(1.9rem, 5vw, 3.2rem)", letterSpacing: 0, color: C.text1 }}>
               Três passos simples
             </h2>
             <p style={{ fontSize: 15, color: C.text2, marginTop: 16, maxWidth: 460, lineHeight: 1.7 }}>
@@ -394,7 +461,6 @@ export default function Home() {
               }}>
                 <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${step.color}, transparent)`, opacity: .45 }} />
 
-                {/* Número do passo */}
                 <div style={{
                   position: "absolute", top: 20, right: 20,
                   fontFamily: "'Space Grotesk'", fontWeight: 800, fontSize: 11,
@@ -412,7 +478,7 @@ export default function Home() {
                   boxShadow: `0 0 32px ${step.glow}`,
                 }}>{step.icon}</div>
 
-                <h3 style={{ fontFamily: "'Space Grotesk'", fontWeight: 600, fontSize: "1.1rem", color: C.text1, marginBottom: 10, letterSpacing: "-.01em", textAlign: "center" }}>{step.title}</h3>
+                <h3 style={{ fontFamily: "'Space Grotesk'", fontWeight: 600, fontSize: "1.1rem", color: C.text1, marginBottom: 10, letterSpacing: 0, textAlign: "center" }}>{step.title}</h3>
                 <p style={{ fontSize: 14, color: C.text2, lineHeight: 1.8, textAlign: "center" }}>{step.desc}</p>
               </div>
             ))}
@@ -420,7 +486,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== CTA FINAL ===== */}
       <section style={{ position: "relative", padding: "80px 24px 100px", display: "flex", justifyContent: "center", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 50% 70% at 50% 50%, ${C.purpleGlow} 0%, transparent 70%)`, pointerEvents: "none" }} />
         <div style={{ position: "relative", width: "100%", maxWidth: 640, display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -434,7 +499,7 @@ export default function Home() {
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${C.purple}, ${C.amber}, ${C.teal})`, opacity: .4 }} />
 
             <p style={{ fontSize: 44, marginBottom: 20, lineHeight: 1 }}>📖</p>
-            <h2 style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: "clamp(1.6rem, 4vw, 2.2rem)", letterSpacing: "-.02em", color: C.text1, marginBottom: 14, lineHeight: 1.25 }}>
+            <h2 style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: "clamp(1.6rem, 4vw, 2.2rem)", letterSpacing: 0, color: C.text1, marginBottom: 14, lineHeight: 1.25 }}>
               O próximo ponto da jornada<br />depende de você
             </h2>
             <p style={{ fontSize: 15, color: C.text2, lineHeight: 1.75, maxWidth: 420, margin: "0 auto" }}>
@@ -444,7 +509,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== FOOTER ===== */}
       <footer style={{ padding: "48px 24px", borderTop: `1px solid ${C.border}`, display: "flex", justifyContent: "center" }}>
         <div style={{ textAlign: "center", maxWidth: 480 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 14 }}>
@@ -461,7 +525,6 @@ export default function Home() {
           <p style={{ fontSize: 11, color: "rgba(82,82,91,.6)" }}>© 2026 SENAI — Todos os direitos reservados.</p>
         </div>
       </footer>
-
     </div>
   );
 }
