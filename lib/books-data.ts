@@ -29,7 +29,7 @@ export const INITIAL_BOOKS: Book[] = [
 
 // Validação do ID do livro
 export function isValidBookId(id: string): boolean {
-  return /^SENAI-0(0[1-9]|1[0-5])$/.test(id);
+  return /^SENAI-0(0[1-9]|1[0-7])$/.test(id);
 }
 
 // Busca o livro pelo ID
