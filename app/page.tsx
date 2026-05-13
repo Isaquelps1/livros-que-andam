@@ -283,7 +283,7 @@ export default function Home() {
 
             <div className="a-fade-up d6 stats-row" style={{ marginTop: 66 }}>
               {[
-                { val: "15", label: "Livros", gradient: `linear-gradient(135deg, ${C.purple}, ${C.purpleLight})` },
+                { val: "17", label: "Livros", gradient: `linear-gradient(135deg, ${C.purple}, ${C.purpleLight})` },
                 { val: "∞", label: "Leitores", gradient: `linear-gradient(135deg, ${C.amber}, #f97316)` },
                 { val: "AO VIVO", label: "Mapa Vivo", gradient: `linear-gradient(135deg, ${C.teal}, ${C.green})` },
               ].map((stat, i) => (
