@@ -18,22 +18,22 @@ const locations = [
 ] as const;
 
 const learningStarts = [
-  "Curti bastante essa parte",
+  "Curti bastante o livro",
   "Foi fácil de entender",
   "Me fez pensar um pouco",
   "Gostei mais do final",
   "Aprendi uma coisa nova hoje",
-  "Essa ideia ficou na cabeça",
+  "A ideia ficou na cabeça",
   "Foi uma leitura bem tranquila",
   "Quero tentar fazer isso também",
   "Não esperava que fosse assim",
   "A história prende bastante",
   "Li rápido porque gostei",
-  "Essa parte foi a melhor",
+  "O melhor foi o final",
   "O começo já chamou atenção",
   "Fiquei curioso até o fim",
   "Foi diferente do que imaginei",
-  "Algumas frases marcaram",
+  "Algumas frases ficaram",
   "Valeu a leitura",
 ];
 
@@ -60,7 +60,9 @@ export const DEMO_LOGS: LogEntry[] = Array.from({ length: 17 }, (_, bookIndex) =
       bookId,
       cidade,
       bairro,
-      aprendizado: `${learningStarts[bookIndex]} ${learningEndings[pointIndex]}`,
+      aprendizado: (bookIndex * 8 + pointIndex) % 5 < 2
+        ? ""
+        : `${learningStarts[bookIndex]} ${learningEndings[pointIndex]}`,
       coordenadas: { lat: lat + nudge, lng: lng - nudge },
       timestamp: new Date(Date.UTC(2026, 1, 3 + bookIndex, 10 + pointIndex, 15)),
       isDemo: true,
