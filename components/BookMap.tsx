@@ -6,7 +6,7 @@ import "leaflet/dist/leaflet.css";
 
 export interface LogEntry {
   id: string; bookId: string; cidade: string; bairro: string;
-  aprendizado: string; coordenadas: { lat: number; lng: number }; timestamp: Date;
+  aprendizado: string; coordenadas: { lat: number; lng: number }; timestamp: Date; isDemo?: boolean;
 }
 
 function makeIcon(i: number, total: number) {
