@@ -2,18 +2,18 @@ import type { LogEntry } from "@/components/BookMap";
 
 // Pontos demonstrativos para apresentações do mapa geral. Não são gravados no Firestore.
 const locations = [
-  ["Ipatinga", "Centro", -19.4776, -42.5273],
-  ["Ipatinga", "Horto", -19.5064, -42.5719],
-  ["Ipatinga", "Cidade Nobre", -19.4645, -42.5587],
-  ["Ipatinga", "Canaã", -19.4548, -42.5516],
-  ["Ipatinga", "Veneza", -19.4683, -42.5311],
-  ["Ipatinga", "Cariru", -19.4933, -42.5300],
-  ["Ipatinga", "Bethânia", -19.4860, -42.5700],
-  ["Ipatinga", "Bom Retiro", -19.4890, -42.5550],
-  ["Coronel Fabriciano", "Centro", -19.5274, -42.6246],
-  ["Coronel Fabriciano", "São Domingos", -19.5008, -42.6360],
-  ["Coronel Fabriciano", "Nossa Senhora do Carmo", -19.5273, -42.6276],
-  ["Coronel Fabriciano", "São Cristóvão", -19.4777, -42.6347],
+  ["Ipatinga", "Centro", -19.4785657, -42.5251567],
+  ["Ipatinga", "Horto", -19.5055418, -42.5712715],
+  ["Ipatinga", "Cidade Nobre", -19.4645300, -42.5587046],
+  ["Ipatinga", "Canaã", -19.4512180, -42.5511226],
+  ["Ipatinga", "Veneza", -19.4677789, -42.5260227],
+  ["Ipatinga", "Cariru", -19.4915630, -42.5268045],
+  ["Ipatinga", "Bethânia", -19.4355359, -42.5529457],
+  ["Ipatinga", "Bom Retiro", -19.5072095, -42.5598147],
+  ["Coronel Fabriciano", "Centro", -19.5289778, -42.6250667],
+  ["Coronel Fabriciano", "São Domingos", -19.4998230, -42.6370021],
+  ["Coronel Fabriciano", "Nossa Senhora do Carmo", -19.5265842, -42.6272685],
+  ["Coronel Fabriciano", "São Cristóvão", -19.4779021, -42.6347826],
 ] as const;
 
 const learningStarts = [
@@ -53,7 +53,7 @@ export const DEMO_LOGS: LogEntry[] = Array.from({ length: 17 }, (_, bookIndex) =
   return Array.from({ length: count }, (_, pointIndex) => {
     const location = locations[(bookIndex * 2 + pointIndex) % locations.length];
     const [cidade, bairro, lat, lng] = location;
-    const nudge = ((bookIndex + pointIndex) % 3 - 1) * 0.00035;
+    const nudge = ((bookIndex + pointIndex) % 3 - 1) * 0.00012;
     return {
       id: `demo-${bookId}-${pointIndex + 1}`,
       bookId,
