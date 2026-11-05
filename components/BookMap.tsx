@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-interface LogEntry {
+export interface LogEntry {
   id: string; bookId: string; cidade: string; bairro: string;
   aprendizado: string; coordenadas: { lat: number; lng: number }; timestamp: Date;
 }
@@ -33,10 +33,14 @@ export default function BookMap({ logs }: { logs: LogEntry[] }) {
     const m = L.map(ref.current, { zoomControl: true, attributionControl: true });
     map.current = m;
 
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+    const cartoKey = process.env.NEXT_PUBLIC_CARTO_API_KEY;
+    L.tileLayer(
+      `https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=${cartoKey ?? ""}`,
+      {
       attribution: '© <a href="https://osm.org/copyright">OSM</a> © <a href="https://carto.com">CARTO</a>',
-      subdomains: "abcd", maxZoom: 19,
-    }).addTo(m);
+      maxZoom: 19,
+      }
+    ).addTo(m);
 
     const pts: L.LatLngExpression[] = [];
     logs.forEach((log, i) => {

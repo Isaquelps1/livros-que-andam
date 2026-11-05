@@ -279,6 +279,9 @@ export default function Home() {
               <a href="#como-funciona" style={S.btnGhost}>
                 Como Funciona?
               </a>
+              <a href="/mapa" style={S.btnGhost}>
+                Ver Mapa Geral
+              </a>
             </div>
 
             <div className="a-fade-up d6 stats-row" style={{ marginTop: 66 }}>
