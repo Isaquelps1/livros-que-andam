@@ -17,19 +17,35 @@ const locations = [
   ["Coronel Fabriciano", "Caladinho", -19.5260, -42.6150],
 ] as const;
 
-const learnings = [
-  "Curti bastante essa parte.",
-  "Foi fácil de entender.",
-  "Me fez pensar um pouco.",
-  "Gostei mais do final.",
-  "Aprendi uma coisa nova hoje.",
-  "Essa ideia ficou na cabeça.",
-  "Foi uma leitura bem tranquila.",
-  "Quero tentar fazer isso também.",
-  "Não esperava que fosse assim.",
-  "A história prende bastante.",
-  "Li rápido porque gostei.",
-  "Essa parte foi a melhor.",
+const learningStarts = [
+  "Curti bastante essa parte",
+  "Foi fácil de entender",
+  "Me fez pensar um pouco",
+  "Gostei mais do final",
+  "Aprendi uma coisa nova hoje",
+  "Essa ideia ficou na cabeça",
+  "Foi uma leitura bem tranquila",
+  "Quero tentar fazer isso também",
+  "Não esperava que fosse assim",
+  "A história prende bastante",
+  "Li rápido porque gostei",
+  "Essa parte foi a melhor",
+  "O começo já chamou atenção",
+  "Fiquei curioso até o fim",
+  "Foi diferente do que imaginei",
+  "Algumas frases marcaram",
+  "Valeu a leitura",
+];
+
+const learningEndings = [
+  "e gostei da ideia.",
+  "e fiquei pensando nisso.",
+  "principalmente pelo exemplo.",
+  "mais do que eu esperava.",
+  "e deu vontade de continuar.",
+  "essa foi a parte mais legal.",
+  "vou lembrar disso depois.",
+  "não tinha pensado desse jeito.",
 ];
 
 export const DEMO_LOGS: LogEntry[] = Array.from({ length: 17 }, (_, bookIndex) => {
@@ -44,7 +60,7 @@ export const DEMO_LOGS: LogEntry[] = Array.from({ length: 17 }, (_, bookIndex) =
       bookId,
       cidade,
       bairro,
-      aprendizado: learnings[(bookIndex + pointIndex) % learnings.length],
+      aprendizado: `${learningStarts[bookIndex]} ${learningEndings[pointIndex]}`,
       coordenadas: { lat: lat + nudge, lng: lng - nudge },
       timestamp: new Date(Date.UTC(2026, 1, 3 + bookIndex, 10 + pointIndex, 15)),
       isDemo: true,
